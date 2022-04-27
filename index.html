@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <html>
 
     <head>
@@ -77,6 +76,9 @@
         <!-- Picture of current weather condition -->
         <img class="curr_img" id = "curr_img" src="./Images/menu_bar.png" alt="Icon of the weather condition">
 
+        <!-- Description of Weather -->
+        <div class="curr_desc" id="curr_desc"></div>
+
         <!-- Advanced Settings -->
         <div id="humidity">
             Humidity:<br>
@@ -91,6 +93,28 @@
         <div id="wind_speed">
             Wind:<br>
             <div id="wind_val"></div>
+        </div>
+
+        <div id="uvi">
+            UVI:<br>
+            <div id="uvi_val"></div>
+        </div>
+
+        <div id="sunrise">
+            Sunrise:<br>
+            <div id="sunrise_val"></div>
+        </div>
+
+        <div id="sunset">
+            Sunset:<br>
+            <div id="sunset_val"></div>
+        </div>
+
+        <!-- Background for Advanced Settings -->
+        <img src="./Images/background_2.jpg" alt="Image of blue mountains as a background">
+
+        <div>
+          <h1 class="advanced_title" id="adv_title">Advanced Settings:</h1>
         </div>
 
     </body>

@@ -29,6 +29,10 @@ class WeatherApp
         this._humidity = null;
         this._pressure = null;
         this._wind_speed = null;
+        this._uvi = null;
+        this._sunrise = null;
+        this._sunset = null;
+        this._description = null;
         this._prevDays = null;
     }
 
@@ -50,12 +54,15 @@ class WeatherApp
         await fetch('https://api.openweathermap.org/data/2.5/weather?lat='+ this._lat + '&lon='+ this._long + '&appid=' + this._key)
             .then(function(resp){ return resp.json() })
                 .then(function(data) {
-                    /* Gets the low current and high temp of the city and weather*/
                     let temp_curr_f = 1.8 * (data.main.feels_like - 273) + 32;
                     let temp_max_f = 1.8 * (data.main.temp_max - 273) + 32;
                     let temp_min_f = 1.8 * (data.main.temp_min - 273) + 32;
                     let weather = data.weather[0].main;
-                    inst.setCurr(temp_curr_f, temp_max_f, temp_min_f, weather, data.name);
+                    let sunrise_date = unixToDate(data.sys.sunrise);
+                    let sunset_date = unixToDate(data.sys.sunset);
+                    let description = data.weather[0].description;
+                    console.log(description);
+                    inst.setCurr(temp_curr_f, temp_max_f, temp_min_f, weather, data.name, sunrise_date, sunset_date, description);
                 })
                 .catch(function(){
                     console.log("Failed getting the current weather data.\n");
@@ -64,7 +71,7 @@ class WeatherApp
 
     /*
      Gathers the next 4 days of weather forcast and stores the day, temp (f), and weather
-     inside a record to set this._Days equal to the list of records 
+     inside a record to set this._Days equal to the list of records
     */
     async getForcast()
     {
@@ -74,6 +81,7 @@ class WeatherApp
                     let forcast = data.daily;
                     let today = forcast[0];
                     let lst = [];
+                    let uv_index = data.current.uvi;
                     for (let i = 0;  i < 4;  i++)
                     {
                         let day = forcast[i];
@@ -83,7 +91,7 @@ class WeatherApp
                         lst.push(record);
                         inst.setForcast(lst);
                     }
-                    inst.setAdvanced(today.humidity, today.pressure, today.wind_speed);
+                    inst.setAdvanced(data.current.humidity, data.current.pressure, data.current.wind_speed, data.current.uvi);
                     inst.updateWebPage();
                 })
                 .catch(function(){
@@ -135,11 +143,12 @@ class WeatherApp
         this._prevDays = lst;
     }
 
-    setAdvanced(humidity, pressure, wind_speed)
+    setAdvanced(humidity, pressure, wind_speed, uvi)
     {
         this._humidity = humidity;
         this._pressure = pressure;
         this._wind_speed = wind_speed;
+        this._uvi = uvi;
         this.getPreviousForcast();
     }
 
@@ -150,7 +159,7 @@ class WeatherApp
         this.getCurrentWeatherData();
     }
 
-    setCurr(curr, max, min, weather, city)
+    setCurr(curr, max, min, weather, city, sunrise, sunset, description)
     {
         unit_button.data = 'off';
         this._temp = FtoC(this._temp);
@@ -159,6 +168,9 @@ class WeatherApp
         this._lowTemp = min.toFixed(2);
         this._weatherType = weather;
         this._cityName = city;
+        this._sunrise = sunrise;
+        this._sunset = sunset;
+        this._description = description;
         current_temp_DOM.data = this._temp;
         this.getForcast();
     }
@@ -176,6 +188,10 @@ class WeatherApp
         humidity_val.innerHTML = this._humidity + '%';
         pressure_val.innerHTML = this._pressure + ' hPa';
         wind_val.innerHTML = this._wind_speed + ' m/s';
+        uvi_val.innerHTML = this._uvi;
+        sunrise_val.innerHTML = this._sunrise.toString();
+        sunset_val.innerHTML = this._sunset.toString();
+        curr_desc.innerHTML = this._description;
 
 
         /*
@@ -209,6 +225,7 @@ class WeatherApp
                     return;
             }
         curr_img.style.visibility = 'visible';
+        curr_desc.style.visibility = "visible";
     }
 }
 
@@ -236,6 +253,13 @@ let wind_val = document.getElementById("wind_val");
 let curr_img = document.getElementById("curr_img");
 let previous_button = document.getElementById("previous_button");
 let prev_button = document.getElementById("prev_button");
+let uvi = document.getElementById("uvi");
+let uvi_val = document.getElementById("uvi_val");
+let sunrise = document.getElementById("sunrise");
+let sunrise_val = document.getElementById("sunrise_val");
+let sunset = document.getElementById("sunset");
+let sunset_val = document.getElementById("sunset_val");
+let curr_desc = document.getElementById("curr_desc");
 let advanced_settings = [humidity, pressure, wind];
 
 
@@ -434,4 +458,14 @@ function setImage( i, obj )
       default:
           return;
   }
+}
+
+function unixToDate( unix_timestamp )
+{
+  var date = new Date(unix_timestamp * 1000);
+  var hours = date.getHours();
+  var minutes = "0" + date.getMinutes();
+  var seconds = "0" + date.getSeconds();
+  let new_date = date.toString().slice(0, 24)
+  return new_date;
 }
