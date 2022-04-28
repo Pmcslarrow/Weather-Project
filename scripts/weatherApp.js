@@ -242,7 +242,6 @@ let menu_DOM = document.getElementById("menu_bar");
 let circles = document.querySelectorAll(".circle");
 let circle_temp = document.querySelectorAll(".day_temp");
 let day_image = document.querySelectorAll(".day_image");
-let advanced_button = document.getElementById("advanced_button");
 let unit_button = document.getElementById("unit_button");
 let humidity = document.getElementById("humidity");
 let humidity_val = document.getElementById("humidity_val");
@@ -304,20 +303,6 @@ menu_DOM.addEventListener('transitionstart', function(){
     if(menu_DOM.offsetWidth > 200 && menu_DOM.offsetWidth <= 220)
     {
         setCircleState('hidden');
-    }
-})
-
-/* Switches advanced settings visible and hidden */
-advanced_button.addEventListener('click', function(){
-    let val = advanced_button.getAttribute("data");
-    if (val === 'off')
-    {
-        advanced_button.setAttribute("data", "on");
-        enableAdvanced();
-        advanced_button.style.visibility = "visible";
-    } else {
-        advanced_button.setAttribute("data", "off");
-        disableAdvanced();
     }
 })
 
