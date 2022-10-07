@@ -34,7 +34,7 @@ class WeatherApp
 
     /* Async Functions used to fetch from the online API  (SETS LATITUDE AND LONGITUDE)*/
     async getCityLatLon(city_name) {
-        await fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + city_name + '&limit=' + this._SEARCH_LIMIT + "&appid=" + this._key)
+        await fetch('https://api.openweathermap.org/geo/1.0/direct?q=' + city_name + '&limit=' + this._SEARCH_LIMIT + "&appid=" + this._key)
             .then(function(resp) { return resp.json() })
             .then(function(data) {
                 inst.setLatLong(data[0].lat, data[0].lon);
